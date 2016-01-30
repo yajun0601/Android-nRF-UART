@@ -153,6 +153,7 @@ public class DeviceListActivity extends Activity {
 
             mScanning = true;
             mBluetoothAdapter.startLeScan(mLeScanCallback);
+            //mBluetoothAdapter.startDiscovery();
             cancelButton.setText(R.string.cancel);
         } else {
             mScanning = false;

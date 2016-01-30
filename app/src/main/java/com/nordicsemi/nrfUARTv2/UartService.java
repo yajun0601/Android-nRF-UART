@@ -77,11 +77,18 @@ public class UartService extends Service {
     public static final UUID CCCD = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
     public static final UUID FIRMWARE_REVISON_UUID = UUID.fromString("00002a26-0000-1000-8000-00805f9b34fb");
     public static final UUID DIS_UUID = UUID.fromString("0000180a-0000-1000-8000-00805f9b34fb");
-    public static final UUID RX_SERVICE_UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-    public static final UUID RX_CHAR_UUID = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
-    public static final UUID TX_CHAR_UUID = UUID.fromString("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
-    
-   
+/*    public static final UUID RX_SERVICE_UUID = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
+    public static final UUID RX_SERVICE_UUID = UUID.fromString("00001234-0000-1000-8000-00805f9b34fb");
+//    public static final UUID RX_SERVICE_UUID = UUID.fromString("0101135E-9F69-5394-BDA6-611D8A468F3C");
+    public static final UUID RX_CHAR_UUID = UUID.fromString("00001236-0000-1000-8000-00805f9b34fb");
+//    public static final UUID RX_CHAR_UUID = UUID.fromString("0101135E-9F69-5394-BDA6-611D8A468F3C");
+    public static final UUID TX_CHAR_UUID = UUID.fromString("00001235-0000-1000-8000-00805f9b34fb");
+*/
+//    "00001800-0000-1000-8000-00805f9b34fb"
+//    "00001801-0000-1000-8000-00805f9b34fb"
+    public static final UUID RX_SERVICE_UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
+    public static final UUID RX_CHAR_UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+    public static final UUID TX_CHAR_UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -299,13 +306,15 @@ public class UartService extends Service {
      */
     public void enableTXNotification()
     { 
-    	/*
+
     	if (mBluetoothGatt == null) {
     		showMessage("mBluetoothGatt null" + mBluetoothGatt);
     		broadcastUpdate(DEVICE_DOES_NOT_SUPPORT_UART);
     		return;
     	}
-    		*/
+        List<BluetoothGattService> list = mBluetoothGatt.getServices();
+        Log.d(TAG, "write BluetoothGattService - status=" + list.toArray());
+
     	BluetoothGattService RxService = mBluetoothGatt.getService(RX_SERVICE_UUID);
     	if (RxService == null) {
             showMessage("Rx service not found!");
@@ -360,7 +369,7 @@ public class UartService extends Service {
      */
     public List<BluetoothGattService> getSupportedGattServices() {
         if (mBluetoothGatt == null) return null;
-
+        Log.d(TAG, "write TXchar - status=" + mBluetoothGatt.getServices());
         return mBluetoothGatt.getServices();
     }
 }
