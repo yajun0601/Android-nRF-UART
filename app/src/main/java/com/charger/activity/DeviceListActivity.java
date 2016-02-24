@@ -20,7 +20,7 @@
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.nordicsemi.nrfUARTv2;
+package com.charger.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +59,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nordicsemi.nrfUARTv2.R;
 
 public class DeviceListActivity extends Activity {
     private BluetoothAdapter mBluetoothAdapter;

@@ -86,9 +86,11 @@ public class UartService extends Service {
 */
 //    "00001800-0000-1000-8000-00805f9b34fb"
 //    "00001801-0000-1000-8000-00805f9b34fb"
+    //---- HMSoft
     public static final UUID RX_SERVICE_UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb");
     public static final UUID RX_CHAR_UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
     public static final UUID TX_CHAR_UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb");
+    // ++++ HMSoft
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
     private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -359,6 +361,7 @@ public class UartService extends Service {
     }
     
     private void showMessage(String msg) {
+
         Log.e(TAG, msg);
     }
     /**

@@ -44,12 +44,17 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.charger.activity.ChargingActivity;
+import com.charger.activity.DeviceListActivity;
+import com.custom.ui.VerticalProgressBar;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -59,7 +64,7 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
     private static final int REQUEST_SELECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     private static final int UART_PROFILE_READY = 10;
-    public static final String TAG = "nRFUART";
+    private static final String TAG = "Home";
     private static final int UART_PROFILE_CONNECTED = 20;
     private static final int UART_PROFILE_DISCONNECTED = 21;
     private static final int STATE_OFF = 10;
@@ -72,12 +77,13 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
     private BluetoothAdapter mBtAdapter = null;
     private ListView messageListView;
     private ArrayAdapter<String> listAdapter;
-    private Button btnConnectDisconnect,btnSend;
+    private Button btnConnectDisconnect,btnSend,btnNext;
     private EditText edtMessage;
+    VerticalProgressBar vPbr_voltage;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.home);
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBtAdapter == null) {
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
@@ -90,7 +96,10 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
         messageListView.setDivider(null);
         btnConnectDisconnect=(Button) findViewById(R.id.btn_select);
         btnSend=(Button) findViewById(R.id.sendButton);
+        btnNext = (Button) findViewById(R.id.btn_next0);
         edtMessage = (EditText) findViewById(R.id.sendText);
+        vPbr_voltage = (VerticalProgressBar) findViewById(R.id.progress_bar);
+        vPbr_voltage.setProgress(50);
         service_init();
 
      
@@ -103,22 +112,19 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
                     Log.i(TAG, "onClick - BT not enabled yet");
                     Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                     startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-                }
-                else {
-                	if (btnConnectDisconnect.getText().equals("Connect")){
-                		
-                		//Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
-                		
-            			Intent newIntent = new Intent(HomeActivity.this, DeviceListActivity.class);
-            			startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
-        			} else {
-        				//Disconnect button pressed
-        				if (mDevice!=null)
-        				{
-        					mService.disconnect();
-        					
-        				}
-        			}
+                } else {
+                    if (btnConnectDisconnect.getText().equals("Connect")) {
+
+                        //Connect button pressed, open DeviceListActivity class, with popup windows that scan for devices
+
+                        Intent newIntent = new Intent(HomeActivity.this, DeviceListActivity.class);
+                        startActivityForResult(newIntent, REQUEST_SELECT_DEVICE);
+                    } else {
+                        //Disconnect button pressed
+                        if (mDevice != null) {
+                            mService.disconnect();
+                        }
+                    }
                 }
             }
         });
@@ -145,7 +151,18 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
                 
             }
         });
-     
+
+        // Handle next
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onClick - BT not enabled yet");
+                Intent intent = new Intent();
+                intent.setClass(HomeActivity.this, ChargingActivity.class);
+                HomeActivity.this.startActivity(intent);
+
+            }
+        });
         // Set initial UI state
         
     }
@@ -159,7 +176,6 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
                     Log.e(TAG, "Unable to initialize Bluetooth");
                     finish();
                 }
-
         }
 
         public void onServiceDisconnected(ComponentName classname) {
@@ -194,7 +210,7 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
                              btnSend.setEnabled(true);
                              ((TextView) findViewById(R.id.deviceName)).setText(mDevice.getName()+ " - ready");
                              listAdapter.add("["+currentDateTimeString+"] Connected to: "+ mDevice.getName());
-                        	 	messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
+                             messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);
                              mState = UART_PROFILE_CONNECTED;
                      }
             	 });
@@ -232,6 +248,8 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
                      public void run() {
                          try {
                          	String text = new String(txValue, "UTF-8");
+
+
                          	String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         	 	listAdapter.add("["+currentDateTimeString+"] RX: "+text);
                         	 	messageListView.smoothScrollToPosition(listAdapter.getCount() - 1);

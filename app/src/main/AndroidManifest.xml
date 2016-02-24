@@ -35,9 +35,10 @@
     <application 
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light"
-        android:icon="@drawable/nrfuart_hdpi_icon">
+        android:icon="@drawable/zf_icon">
         <activity
-            android:name=".MainActivity"
+            android:name=".HomeActivity"
+            android:screenOrientation="landscape"
             android:label="@string/app_name"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="keyboardHidden|orientation|screenSize">
@@ -47,7 +48,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DeviceListActivity" android:label="@string/app_name" android:theme="@android:style/Theme.Dialog"/>
+        <activity android:name="com.charger.activity.DeviceListActivity"
+            android:screenOrientation="landscape"
+            android:label="@string/app_name" android:theme="@android:style/Theme.Dialog"/>
+
+        <activity android:name="com.charger.activity.ChargingActivity"
+            android:screenOrientation="landscape"
+            android:label="@string/app_name" android:theme="@android:style/Theme.Holo.Light"
+            />
+        <activity android:name="com.charger.activity.ChargingEndActivity"
+            android:screenOrientation="landscape"
+            android:label="@string/app_name" android:theme="@android:style/Theme.Holo.Light"/>
+        <activity android:name="com.charger.activity.ReChargingActivity"
+            android:screenOrientation="landscape"
+            android:label="@string/app_name" android:theme="@android:style/Theme.Holo.Light"/>
+
         <service android:enabled="true" android:name=".UartService" />
     </application>
 
