@@ -54,6 +54,7 @@ import android.widget.Toast;
 
 import com.charger.activity.ChargingActivity;
 import com.charger.activity.DeviceListActivity;
+import com.charger.data.Protocal;
 import com.custom.ui.VerticalProgressBar;
 
 import java.io.UnsupportedEncodingException;
@@ -193,6 +194,7 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
         }
     };
 
+    private StringBuilder protocalSB = new StringBuilder();
     private final BroadcastReceiver UARTStatusChangeReceiver = new BroadcastReceiver() {
 
         public void onReceive(Context context, Intent intent) {
@@ -242,12 +244,37 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
             }
           //*********************//
             if (action.equals(UartService.ACTION_DATA_AVAILABLE)) {
-              
-                 final byte[] txValue = intent.getByteArrayExtra(UartService.EXTRA_DATA);
+                byte halfPackage[] = null;
+                 final byte[] rxBytes = intent.getByteArrayExtra(UartService.EXTRA_DATA);
+                 if (rxBytes.length > 0 && (rxBytes[0]-Protocal.MAGIC_WORD ==0))
+                 {
+                     if(rxBytes.length == (rxBytes[Protocal.L1_HEADER_LENGTH_POS]&0x3F) + Protocal.L1_HEADER_SIZE)
+                     { // full transport package
+                         // call back full package received
+
+                         Protocal protocal = new Protocal(rxBytes);
+
+                     }
+                     else if(rxBytes.length < (rxBytes[Protocal.L1_HEADER_LENGTH_POS]&0x3F) + Protocal.L1_HEADER_SIZE)
+                     {
+                         halfPackage =  rxBytes.clone();
+
+                     }
+                 }else if(halfPackage != null)
+                 {
+                     byte[] data3 = new byte[halfPackage.length+rxBytes.length];
+                     System.arraycopy(halfPackage,0,data3,0,halfPackage.length);
+                     System.arraycopy(rxBytes,0,data3,halfPackage.length,rxBytes.length);
+
+                     // resolv protocal data3
+
+                     halfPackage = null;
+                 }
+
                  runOnUiThread(new Runnable() {
                      public void run() {
                          try {
-                         	String text = new String(txValue, "UTF-8");
+                         	String text = new String(rxBytes, "UTF-8");
 
 
                          	String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
