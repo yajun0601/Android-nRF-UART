@@ -266,6 +266,7 @@ public class HomeActivity extends Activity implements RadioGroup.OnCheckedChange
                      System.arraycopy(halfPackage,0,data3,0,halfPackage.length);
                      System.arraycopy(rxBytes,0,data3,halfPackage.length,rxBytes.length);
 
+
                      // resolv protocal data3
 
                      halfPackage = null;

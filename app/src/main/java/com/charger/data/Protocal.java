@@ -26,15 +26,36 @@ public class Protocal {
     private int status;
     private int payload_lenght;
     public static final int  MAGIC_WORD = 0xAB;
+    public static Battery battery = null;
+    public static DCDC_Gun dcCharger = null;
 //    char chars[];
     public Protocal(byte str[]){  /*factory ?*/
         // 数据不全的情况未考虑
+        if (!resolve_L1_header(str))
+            return;
         payload_lenght = str[L1_HEADER_LENGTH_POS]&0x3f;
         if (resolve_L1_header(str)){
+
+            int vol, curr, res_cap, temp, stat, charged_capacity, charged_time;
             switch (str[L1_HEADER_CMD_POS]){
                 case BATTERY_CMD_ID:
+
+                    vol = str[L1_HEADER_DATA_START_BYTE_POS] << 8 | str[L1_HEADER_DATA_START_BYTE_POS + 1];
+                    curr = str[L1_HEADER_DATA_START_BYTE_POS + 2] << 8 | str[L1_HEADER_DATA_START_BYTE_POS + 3];
+                    res_cap = str[L1_HEADER_DATA_START_BYTE_POS + 4] << 8 | str[L1_HEADER_DATA_START_BYTE_POS + 5];
+                    temp    = str[L1_HEADER_DATA_START_BYTE_POS + 6];
+                    stat    = str[L1_HEADER_DATA_START_BYTE_POS + 7];
+                    battery = new Battery(vol, curr, res_cap, temp, stat);
                     break;
                 case DC_CHARGER_CMD_ID:
+                    vol = str[L1_HEADER_DATA_START_BYTE_POS] << 8 | str[L1_HEADER_DATA_START_BYTE_POS + 1];
+                    curr = str[L1_HEADER_DATA_START_BYTE_POS + 2] << 8 | str[L1_HEADER_DATA_START_BYTE_POS + 3];
+                    charged_capacity = str[L1_HEADER_DATA_START_BYTE_POS + 4] << 8 | str[L1_HEADER_DATA_START_BYTE_POS + 5];
+                    charged_time = str[L1_HEADER_DATA_START_BYTE_POS + 6] << 8 | str[L1_HEADER_DATA_START_BYTE_POS + 7]
+                    temp    = str[L1_HEADER_DATA_START_BYTE_POS + 8];
+                    stat    = str[L1_HEADER_DATA_START_BYTE_POS + 9];
+
+                    dcCharger = new DCDC_Gun(vol, curr, charged_capacity, charged_time, temp, stat);
                     break;
             }
             resolve_L1(str);
